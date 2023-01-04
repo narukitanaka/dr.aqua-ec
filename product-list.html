@@ -1,0 +1,60 @@
+{% set sortOrder = '&sortKind=1' %} 
+{% if sortKind == '2' %}
+{% set sortOrder = '&sortKind=2' %} 
+{% elseif sortKind == '3' %}
+{% set sortOrder = '&sortKind=3' %} 
+{% elseif sortKind == '4' %}
+{% set sortOrder = '&sortKind=4' %} 
+{% elseif sortKind == '5' %}
+{% set sortOrder = '&sortKind=5' %} 
+{% endif %}
+
+<section class="wrapper_product-list">
+  <div class="pageheader-imgwrapper">
+    <h2>PRODUCTS</h2>
+  </div>
+  <!-- パンくずリスト -->
+			{% if breadCrumbsList is not empty %}
+				<div class="bread">
+					<ul class="clearfix">
+						{% for item in breadCrumbsList %} {% if loop.index < loop.length - 1 %}
+						<li><a href="{{ item.url }}"><span>{{ item.displayValue }}</span></a></li>
+						{% else %}
+						<li><span>{{ item.displayValue }}</span></li>
+						{% endif %} {% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+  <div class="product-list_top">
+    <div class="display-order">
+      <span class="sort-label">表示順　:　</span>
+			<label for="sort-select">
+				<select name="sort-select" id="sort-select" onchange="location.href='./item-list?pageIndex=0&sortKind=' + document.querySelector('select[name=sort-select]').value + '{{ condition }}'">
+					<option value="1" {% if sortKind == '1' %} selected="selected" {% endif %}>価格の低い順</option>
+					<option value="2" {% if sortKind == '2' %} selected="selected" {% endif %}>価格の高い順</option>
+					<option value="3" {% if sortKind == '3' %} selected="selected" {% endif %}>更新日順</option>
+					{% if itemNameLinkDispFlag == 1 %} <option value="4" {% if sortKind == '4' %} selected="selected" {% endif %}>商品名順</option> {% endif %}
+					<option value="5" {% if sortKind == '5' %} selected="selected" {% endif %}>{{ itemOrderName }}</option>
+				</select>
+			</label>
+    </div>
+    <div class="display-count">
+      <p>{{ totalCount }}件</p>
+    </div>
+  </div>
+  <div class="product-list_area">
+    {% for item in itemList %}
+    <div class="product-list_item">
+      {% if item.dispMediaUrl is not empty %}
+      <img src="{{ item.dispMediaUrlSmall }}" alt="{{ item.itemName }}"> {% else %}
+      <img src="{{ item.mediaUrlSmall }}" alt="{{ item.itemName }}"> {% endif %}
+      <p>{{ item.itemName }}</p>
+      <p>{{ item.displayPrice }}{{ item.displayTax }}</p>
+      <button>
+        <a href="/item-detail/{{ item.itemId }}">商品詳細</a>
+      </button>
+      {% if item.stockOutMessage is not empty %}<p class="product-list-nonstock">{{ item.stockOutMessage }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>

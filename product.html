@@ -1,0 +1,260 @@
+<!-- パンくずリスト -->
+{% if breadCrumbsList is not empty %}
+<div class="bread">
+  <ul class="clearfix">
+    {% for item in breadCrumbsList %} {% if loop.index < loop.length - 1 %}
+    <li><a href="{{ item.url }}"><span>{{ item.displayValue }}</span></a></li>
+    {% else %}
+    <li><span>{{ item.displayValue }}</span></li>
+    {% endif %} {% endfor %}
+  </ul>
+</div>
+{% endif %}
+<section class="wrapper_product">
+<div class="inner">
+<div class="product_left-area sp_none">
+  <div class="slick_slider02-wrap">
+    <ul class="slick_slider02" id="slick_slider03">
+       <li><img src="{{ variationList[0].mediaUrlLarge }}" alt=""></li>
+      {% if itemData.otherMediaUrlsSmall|length != 0 %}
+        {% for otherMediaUrlSmall in itemData.otherMediaUrlsSmall %}
+          <li><img src="{{ otherMediaUrlSmall }}" alt=""></li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+    <div class="thumbs_dots"></div>
+  </div>
+</div>
+<div class="item-detail-left">
+  <!--メイン画像-->
+  <div class="item-detail-photo-main raku-item-photo-main">
+    <div class="item-detail-photo{% if itemData.badgeId != empty %} icon-badge{{ itemData.badgeId }}{% endif %}" id="jq_item_photo_list">
+      <ul class="cl">
+      <li class="active"><img src="{{ variationList[0].mediaUrlLarge }}" alt=""></li>
+      {% for otherMediaUrlLarge in itemData.otherMediaUrlsLarge %}
+      <li><img src="{{ otherMediaUrlLarge }}" alt=""></li>
+      {% endfor %}
+      </ul>
+    </div><!--//item-detail-photo-->
+  
+    <div id="jqitem-backbtn" class="item-detail-photo-backbtn"><a href="#"></a></div>
+    <div id="jqitem-nextbtn" class="item-detail-photo-nextbtn"><a href="#"></a></div>
+  </div><!--//item-detail-photo-main-->
+  {% if itemData.otherMediaUrlsSmall|length != 0 %}
+  <!--サムネイル画像-->
+  <div class="item-detail-thumb">
+    <div class="item-detail-thumb-photo raku-item-thumb-photo active"><a href="#"><img src="{{ variationList[0].mediaUrlSmall }}" alt=""></a></div>
+    {% for otherMediaUrlSmall in itemData.otherMediaUrlsSmall %}
+    <div class="item-detail-thumb-photo raku-item-thumb-photo"><a href="#"><img src="{{ otherMediaUrlSmall }}" alt=""></a></div>
+    {% endfor %}
+  </div><!--//item-detail-thumb-->
+  {% endif %}
+</div><!--//item-detail-left-->
+<div class="product_right-area">
+  {% if itemData.itemEnable == 1 or itemData.itemEnable == 2 %}
+    <p class="categry-name">{{ itemData.categoryName }}</p>
+    <p class="item-name">{{ itemData.itemName }}</p>
+    <p class="price">{{ variationList[0].displaySalePrice }}<span>{{ variationList[0].displaySaleTax }}</span></p>
+    {% if registValidFlag == 1 %}
+      <div class="item-detail-vari-memberprice" {% if variationList[0].mmbrPrice is empty %} style="display:none" {% endif %}>
+        <dl>
+          <dt>会員価格</dt>
+          <dd><span class="item-detail-vari-memberprice-num raku-item-vari-memberprice-num">{{ variationList[0].displayMmbrPrice }}</span><span class="item-detail-vari-memberprice-tax raku-item-vari-membertax">{{ variationList[0].displayMmbrTax }}</span></dd>
+        </dl>
+      </div>
+    {% endif %}
+
+    <form action="{{ shpCartUrl }}/incart" method="post" id="cms0002d02Form">
+      <div class="item-detail-input clearfix">
+        {% if variationList|length > 1 %} 
+          <div class="item-detail-input-select-l">
+            {% if itemData.variationDispFlag == 2 %}
+              <div class="item-detail-cart-vari-select">
+                <label for="variationId">
+                  <select name="variationId">
+                    {% for variation in variationList %}
+                      {% if variationId == variation.variationId %}
+                        <option value="{{ variation.variationId }}" selected="selected">{{ variation.variationName }}</option>
+                      {% else %}
+                        <option value="{{ variation.variationId }}">{{ variation.variationName }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </label>
+              </div>
+            {% else %}
+              <div class="item-detail-cart-vari-radio">
+                {% for variation in variationList %}
+                  <div>
+                    {% if variationId == variation.variationId %}
+                      <input type="radio" name="variationId" value="{{ variation.variationId }}" id="{{ variation.variationId }}" checked="checked">
+                      <label for="{{ variation.variationId }}">{{ variation.variationName }}</label>
+                    {% else %}
+                      <input type="radio" name="variationId" value="{{ variation.variationId }}" id="{{ variation.variationId }}">
+                      <label for="{{ variation.variationId }}">{{ variation.variationName }}</label>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% else %}
+          {% for variation in variationList %}
+            <input type="hidden" name="variationId" value="{{ variation.variationId }}">
+          {% endfor %}
+        {% endif %} 
+        {% if itemData.itemAttrPtrn == 2 %}
+          {% for attr in itemAttrList %}
+            {% if attr.formType == 1 %}
+              <p>{{ attr.attrName }}</p>
+              <div class="item-detail-select">
+                <label for="attrValues">
+                  <select name="attrValues">
+                    {% for attrValue in attr.attrValues %}
+                      <option value="{{ attrValue }}" {% if loop.index == 0 %} selected="selected" {% endif %}>{{ attrValue }}</option>
+                    {% endfor %}
+                  </select>
+                </label>
+              </div>
+            {% else %}
+              <p>{{ attr.attrName }}</p>
+              <div class="item-detail-inputtext">
+                <input type="text" name="attrValues" maxlength="100">
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if itemData.numericFormType == 1 %}
+          {% if variationList|length > 1 %} 
+            <div class="item-detail-input-select-r">
+          {% else %}
+            <div class="item-detail-input-select-r" style="float: none">
+          {% endif %}							
+            <p>数量</p>
+            <div class="item-detail-num-count">
+              <div class="item-detail-num-minus">
+                <a href="#">-</a>
+              </div>
+              <div class="item-detail-num">
+                <input type="number" name="itemQuantity" class="jq-num-count" value="{{ itemQuantity }}" maxlength="3" max="999" min="1">
+              </div>
+              <div class="item-detail-num-plus">
+                <a href="#">+</a>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if itemData.numericFormType == 2 %}
+          <p>数量</p>
+          <div class="item-detail-num-select">
+            <label for="cart-item-select1">
+              <select name="itemQuantity" id="cart-item-select1" class="js-counter-display">
+                {% for item in quantityField %}
+                  {% if itemQuantity == item.value %}
+                    <option value="{{ item.key }}" selected="selected">{{ item.value }}</option>
+                  {% else %}
+                    <option value="{{ item.key }}">{{ item.value }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+        {% endif %}
+        {% if itemData.numericFormType == 3 %}
+          <div class="js-counter-wrap">
+            <input type="hidden" name="itemQuantity" value="1">
+          </div>
+        {% endif %}
+      </div>
+
+        {% if itemData.orderInvalidFlag == 0 %}
+          {% if itemData.onSale != 0 %}
+            {% if itemData.stockExist != 0 %} 
+              <div class="item-detail-cart-action raku-item-cart-action">
+                <div class="item-detail-cart-btn">
+                  <a href="#" class="raku-add-cart"><span>カートに入れる</span></a>
+                </div>
+              </div>
+            {% else %}
+              <div class="item-detail-cart-action">
+                <div class="item-dtail-nostock">在庫切れのため注文いただけません。</div>
+              </div>
+            {% endif %}
+          {% else %}
+            <div class="item-detail-cart-action">
+              <div class="item-dtail-outofoperiod">販売期間外のため注文いただけません。</div>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="item-detail-cart-action">
+            <div class="item-dtail-orderinvalid">ただいまご注文いただけません。</div>
+          </div>
+        {% endif %}
+      <input type="hidden" name="itemId" value="{{ itemData.itemId }}">
+      <input type="hidden" name="shpHash" value="{{ shpHash }}">
+    </form>
+
+    <div class="item_intro-text">
+      {% if itemData.campaignList is not empty %}
+        <div class="item-detail-campaign">
+          <dl>
+            <dt>キャンペーン</dt>
+            <dd>
+              {% for campaign in itemData.campaignList %}
+              <a href="/item-list?campaignId={{ campaign.campaignId }}">{{ campaign.campaignName }}</a>{% if loop.index < loop.length - 1 %}｜ {% endif %} {% endfor %} </dd>
+          </dl>
+        </div>
+      {% endif %}
+      {% if itemData.saleTermLowLimit is not empty or itemData.saleTermUpLimit is not empty %}
+        <div class="item-detail-term">
+          <dl>
+            <dt>販売期間</dt>
+            <dd>{{ itemData.saleTermLowLimit }}&#65374;{{ itemData.saleTermUpLimit }}</dd>
+          </dl>
+        </div>  
+      {% endif %}
+      {% if itemData.itemInfo1 is not empty %}
+        <div class="item-comment">
+          <div class="item-detail-txt1 wysiwyg-data">
+            {{ itemData.itemInfo1 }}
+          </div>
+        </div>
+      {% endif %}
+      {% if itemData.itemInfo2 is not empty %}
+      <div class="item-comment">
+        <div class="item-detail-txt2 wysiwyg-data">
+          {{ itemData.itemInfo2 }}
+        </div>
+      </div>
+      {% endif %}
+      {% if itemData.itemInfo3 is not empty %}
+        <div class="item-detail-txt3 wysiwyg-data">
+        {{ itemData.itemInfo3 }}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+</div>
+</section>
+
+{% if itemRecommendList|length > 0 %}
+<section class="wrapper_recommend">
+<h2>RECOMMEND</h2>
+<div class="product-list_area">
+{% for item in itemRecommendList %}
+  <div class="product-list_item">
+    {% if item.dispMediaUrl is not empty %}
+    <img src="{{ item.dispMediaUrlSmall }}" alt="{{ item.itemName }}"> {% else %}
+    <img src="{{ item.mediaUrlSmall }}" alt="{{ item.itemName }}"> {% endif %}
+    <p>{{ item.categoryName }}</p>
+    <p>{{ item.itemName }}</p>
+    <p>{{ item.displayPrice }}</p>
+    <button>
+      <a href="/item-detail/{{ item.itemId }}">商品詳細</a>
+    </button>
+  </div>
+{% endfor %}
+</div>
+</section>
+{% endif %}

@@ -1,0 +1,93 @@
+<section class="wrapper_product-list">
+  <div class="pageheader-imgwrapper">
+    <h2>PRODUCTS</h2>
+  </div>
+
+  <div class="wrapper_categry">
+    <div class="categry_box01" id="cotegry_sub-area01">
+      <h3 id="categry_head-text">DR.SAIBO SERIES</h3>
+      <div class="categry_photo01">
+        <img src="https://image.raku-uru.jp/01/24040/82/category_saibo01_1670311349421.jpg" alt="" class="parallax sp_none" id="categry_img01">
+        <img src="https://image.raku-uru.jp/01/24040/90/category_saibo01_sp_1671602277457.jpg" alt="" class="parallax pc_none" id="categry_img04">
+      </div>
+      <p class="categry_text" id="categry_text">
+        ドクターサイボのヘアケア商品は「細胞が喜ぶ」をコンセプトに、商品の開発を行っています。<br>
+        あなたの未来の健康なお肌や髪のために、細胞レベルでアプローチできるシリーズです。<br>
+        私たちは細胞が喜ぶ環境するためにできるだけ使い切りや空気に触れないようエアレス容器を採用しております。
+      </p>
+      <p class="d-c_text">DOCTOR'S COSMETICS</p>
+    </div>
+    <div class="categry_box02">
+      <div class="inner categry-saibo02 sp_none" id="cotegry_sub-area02" >
+        <p>
+          テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+        </p>
+        <div class="categry_photo02">
+          <img src="https://image.raku-uru.jp/01/24040/85/category_saibo02_1670311351298.jpg" alt="" class="parallax" id="categry_img02">
+        </div>
+        <div class="categry_photo03">
+          <img src="https://image.raku-uru.jp/01/24040/87/category_saibo03_1670311352243.jpg" alt="" class="parallax" id="categry_img03">
+        </div>
+      </div>
+      <div class="categry_text-box_sp">
+            <div class="categry_photo02_sp">
+              <img src="https://image.raku-uru.jp/01/24040/87/category_saibo03_1670311352243.jpg" alt="" class="parallax" id="categry_img05">
+            </div>
+            <p>
+              テキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+            </p>
+            <div class="categry_photo03_sp">
+              <img src="https://image.raku-uru.jp/01/24040/85/category_saibo02_1670311351298.jpg" alt="" class="parallax" id="categry_img06">
+              <div class="cotegry_sub-area03 categry-saibo02" id="cotegry_sub-area03"></div>
+            </div>
+          </div>
+    </div>
+  </div>
+
+  <!-- パンくずリスト -->
+			{% if breadCrumbsList is not empty %}
+				<div class="bread">
+					<ul class="clearfix">
+						{% for item in breadCrumbsList %} {% if loop.index < loop.length - 1 %}
+						<li><a href="{{ item.url }}"><span>{{ item.displayValue }}</span></a></li>
+						{% else %}
+						<li><span>{{ item.displayValue }}</span></li>
+						{% endif %} {% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+  <div class="product-list_top">
+    <div class="display-order">
+      <span class="sort-label">表示順　:　</span>
+			<label for="sort-select">
+				<select name="sort-select" id="sort-select" onchange="location.href='./item-list?pageIndex=0&sortKind=' + document.querySelector('select[name=sort-select]').value + '{{ condition }}'">
+					<option value="1" {% if sortKind == '1' %} selected="selected" {% endif %}>価格の低い順</option>
+					<option value="2" {% if sortKind == '2' %} selected="selected" {% endif %}>価格の高い順</option>
+					<option value="3" {% if sortKind == '3' %} selected="selected" {% endif %}>更新日順</option>
+					{% if itemNameLinkDispFlag == 1 %} <option value="4" {% if sortKind == '4' %} selected="selected" {% endif %}>商品名順</option> {% endif %}
+					<option value="5" {% if sortKind == '5' %} selected="selected" {% endif %}>{{ itemOrderName }}</option>
+				</select>
+			</label>
+    </div>
+    <div class="display-count">
+      <p>{{ totalCount }}件</p>
+    </div>
+  </div>
+  <div class="product-list_area">
+    {% for item in itemList %}
+    <div class="product-list_item">
+      {% if item.dispMediaUrl is not empty %}
+      <img src="{{ item.dispMediaUrlSmall }}" alt="{{ item.itemName }}"> {% elseif item.mediaUrl is not empty %}
+      <img src="{{ item.mediaUrlSmall }}" alt="{{ item.itemName }}"> {% else %}
+      <img src="{{ item.mediaUrlSmall }}" alt="{{ item.itemName }}"> {% endif %}
+      <p>Dr.saibo</p>
+      <p>{{ item.itemName }}</p>
+      <p>{{ item.displayPrice }}{{ item.displayTax }}</p>
+      <button>
+        <a href="/item-detail/{{ item.itemId }}">商品詳細</a>
+      </button>
+      {% if item.stockOutMessage is not empty %}<p class="product-list-nonstock">{{ item.stockOutMessage }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>

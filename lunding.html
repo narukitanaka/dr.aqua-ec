@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width">
+	<meta name="format-detection" content="telephone=no">
+	<title>{{title}} | {{ shopName }}</title>
+
+	<meta property="og:site_name" content="{{ shopName }}"> {% if itemData != null %}
+	<!-- 商品詳細の場合 -->
+	<meta name="description" content="{{ itemData.metadescription }}">
+	<meta property="og:image" content="{{ itemData.ogImageUrl }}">
+	<meta property="og:title" content="{{ itemData.ogTitle }}">
+	<meta property="og:type" content="{{ itemData.ogType }}">
+	<meta property="og:url" content="{{ thisUrl }}">
+	<meta property="og:description" content="{{ itemData.metadescription }}"> {% endif %}
+
+	{% if topFaviconUrl is not empty %}
+	<link rel="shortcut icon" href="{{ topFaviconUrl }}">
+	<link rel="icon" type="image/vnd.microsoft.icon" href="{{ topFaviconUrl }}">
+	{% endif %}
+	<link href="{{ cssAddr }}" rel="stylesheet" type="text/css">
+	<!--[if lt IE 10]>
+		<style type="text/css">label:after {display:none;}</style>
+	<![endif]-->
+	<[-- HEADER_CUSTOM_CONTENTS --]>
+	{% if robots is not empty %}<meta name="robots" content="{{ robots }}">{% endif %}
+	{% if canonicalUrl is not empty %}<link rel="canonical" href="{{ canonicalUrl }}">{% endif %}
+	{% if prevUrl is not empty %}<link rel="prev" href="{{ prevUrl }}">{% endif %}
+	{% if nextUrl is not empty %}<link rel="next" href="{{ nextUrl }}">{% endif %}
+</head>
+
+<body class="body-lp">
+	<div id="wrapper">
+		<div id="header">
+			<div class="header-top-cart clearfix">
+				<div class="row">
+					<div class="logo">
+						<h1>
+							<a href="/">
+								{% if hdrLogoDispFlag == 1 and hdrLogoImageUrl is not empty %}<img src="{{ hdrLogoImageUrl }}" alt="{{ shopName }}">{% else %}<p class="logo-text">{{ shopName }}</p>{% endif %}
+							</a>
+						</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- header -->
+		<div class="contents contents-lp clearfix">
+			<div class="main clearfix">
+				{% if mediaUrl is not empty %}
+					<div class="lp-img"><img src="{{ mediaUrl }}" alt="{{title}}"></div>
+				{% endif %}
+				<div class="wysiwyg-data">
+					<[-- MAIN_CONTENTS --]>
+				</div>
+				<div class="item-order">
+					{% if itemData.itemEnable == 1 or itemData.itemEnable == 2 %}
+						<form action="{{ shpCartUrl }}/incart" method="post" id="cms0002d02Form">
+							<div class="item-detail-input clearfix">
+								{% if variationList|length > 1 %} 
+									<div class="item-detail-input-select-l">
+										{% if itemData.variationDispFlag == 2 %}
+											<div class="item-detail-select">
+												<label for="variationId">
+													<select name="variationId">
+														{% for variation in variationList %}
+															{% if variationId == variation.variationId %}
+																<option value="{{ variation.variationId }}" selected="selected">{{ variation.variationName }}</option>
+															{% else %}
+																<option value="{{ variation.variationId }}">{{ variation.variationName }}</option>
+															{% endif %}
+														{% endfor %}
+													</select>
+												</label>
+											</div>
+										{% else %}
+											<div class="item-detail-cart-vari-radio">
+												{% for variation in variationList %}
+													<div>
+														{% if variationId == variation.variationId %}
+															<input type="radio" name="variationId" value="{{ variation.variationId }}" id="{{ variation.variationId }}" checked="checked">
+															<label for="{{ variation.variationId }}">{{ variation.variationName }}</label>
+														{% else %}
+															<input type="radio" name="variationId" value="{{ variation.variationId }}" id="{{ variation.variationId }}">
+															<label for="{{ variation.variationId }}">{{ variation.variationName }}</label>
+														{% endif %}
+													</div>
+												{% endfor %}
+											</div>
+										{% endif %}
+									</div>
+								{% else %}
+									{% for variation in variationList %}
+										<input type="hidden" name="variationId" value="{{ variation.variationId }}">
+									{% endfor %}
+								{% endif %} 
+								{% if itemData.itemAttrPtrn == 2 %}
+									{% for attr in itemAttrList %}
+										{% if attr.formType == 1 %}
+											<p>{{ attr.attrName }}</p>
+											<div class="item-detail-select">
+												<label for="attrValues">
+													<select name="attrValues">
+														{% for attrValue in attr.attrValues %}
+															<option value="{{ attrValue }}" {% if loop.index == 0 %} selected="selected" {% endif %}>{{ attrValue }}</option>
+														{% endfor %}
+													</select>
+												</label>
+											</div>
+										{% else %}
+											<p>{{ attr.attrName }}</p>
+											<div class="item-detail-inputtext">
+												<input type="text" name="attrValues" maxlength="100">
+											</div>
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+								{% if itemData.numericFormType == 1 %}
+									{% if variationList|length > 1 %} 
+										<div class="item-detail-input-select-r">
+									{% else %}
+										<div class="item-detail-input-select-r" style="float: none">
+									{% endif %}							
+										<p>数量</p>
+										<div class="item-detail-num-count">
+											<div class="item-detail-num-minus">
+												<a href="#">-</a>
+											</div>
+											<div class="item-detail-num">
+												<input type="number" name="itemQuantity" class="jq-num-count" value="{{ itemQuantity }}" maxlength="3" max="999" min="1">
+											</div>
+											<div class="item-detail-num-plus">
+												<a href="#">+</a>
+											</div>
+										</div>
+									</div>
+								{% endif %}
+								{% if itemData.numericFormType == 2 %}
+									<p>数量</p>
+									<div class="item-detail-num-select">
+										<label for="cart-item-select1">
+											<select name="itemQuantity" id="cart-item-select1" class="js-counter-display">
+												{% for item in quantityField %}
+													{% if itemQuantity == item.value %}
+														<option value="{{ item.key }}" selected="selected">{{ item.value }}</option>
+													{% else %}
+														<option value="{{ item.key }}">{{ item.value }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+										</label>
+									</div>
+								{% endif %}
+								{% if itemData.numericFormType == 3 %}
+									<div class="js-counter-wrap">
+										<input type="hidden" name="itemQuantity" value="1">
+									</div>
+								{% endif %}
+							</div>
+							<div class="item-detail-cart-action raku-item-cart-action">
+								{% if itemData.orderInvalidFlag == 0 %}
+									{% if itemData.onSale != 0 %}
+										{% if itemData.stockExist != 0 %} 
+											<div class="item-detail-cart-btn">
+												<a href="#" class="raku-add-cart"><span>カートに入れる</span></a>
+											</div>
+										{% else %}
+											<div class="item-dtail-nostock">在庫切れのため注文いただけません。</div>
+										{% endif %}
+									{% else %}
+										<div class="item-dtail-outofoperiod">販売期間外のため注文いただけません。</div>
+									{% endif %}
+								{% else %}
+									<div class="item-dtail-orderinvalid">ただいまご注文いただけません。</div>
+								{% endif %}
+							</div>
+							<input type="hidden" name="itemId" value="{{ itemData.itemId }}">
+							<input type="hidden" name="shpHash" value="{{ shpHash }}">
+						</form>
+					{% endif %}
+					{% if itemData.itemEnable == 2 or itemData.itemEnable == 3 %}
+						<form action="{{ shpCartUrl }}/sincart" method="post">
+							<div class="item-detail-input clearfix">
+								{% if itemData.itemAttrPtrn == 2 %}
+									{% for attr in itemAttrList %}
+										{% if attr.formType == 1 %}
+											<p>{{ attr.attrName }}</p>
+											<div class="item-detail-select">
+												<label for="attrValues">
+													<select name="attrValues">
+														{% for attrValue in attr.attrValues %}
+															<option value="{{ attrValue }}" {% if loop.index == 0 %} selected="selected" {% endif %}>{{ attrValue }}</option>
+														{% endfor %}
+													</select>
+												</label>
+											</div>
+										{% else %}
+											<p>{{ attr.attrName }}</p>
+											<div class="item-detail-inputtext">
+												<input type="text" name="attrValues" maxlength="100">
+											</div>
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+								{% if itemData.numericFormType == 1 %}
+									{% if variationList|length > 1 %} 
+										<div class="item-detail-input-select-r">
+									{% else %}
+										<div class="item-detail-input-select-r" style="float: none">
+									{% endif %}							
+										<p>数量</p>
+										<div class="item-detail-num-count">
+											<div class="item-detail-num-minus">
+												<a href="#">-</a>
+											</div>
+											<div class="item-detail-num">
+												<input type="number" name="itemQuantity" class="jq-num-count" value="{{ itemQuantity }}" maxlength="3" max="999" min="1">
+											</div>
+											<div class="item-detail-num-plus">
+												<a href="#">+</a>
+											</div>
+										</div>
+									</div>
+								{% endif %}
+								{% if itemData.numericFormType == 2 %}
+									<p>数量</p>
+									<div class="item-detail-num-select">
+										<label for="cart-item-select1">
+											<select name="itemQuantity" id="cart-item-select1" class="js-counter-display">
+												{% for item in quantityField %}
+													{% if itemQuantity == item.value %}
+														<option value="{{ item.key }}" selected="selected">{{ item.value }}</option>
+													{% else %}
+														<option value="{{ item.key }}">{{ item.value }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+										</label>
+									</div>
+								{% endif %}
+								{% if itemData.numericFormType == 3 %}
+									<div class="js-counter-wrap">
+										<input type="hidden" name="itemQuantity" value="1">
+									</div>
+								{% endif %}
+							</div>
+							<div class="item-detail-cart-action raku-item-cart-action">
+								{% if itemData.orderInvalidFlag == 0 %}
+									{% if itemData.onSale != 0 %}
+										<div class="item-detail-cart-btn">
+											<a href="#" class="raku-add-cart"><span>定期購入カートに入れる</span></a>
+										</div>
+									{% else %}
+										<div class="item-dtail-outofoperiod">販売期間外のため注文いただけません。</div>
+									{% endif %}
+								{% else %}
+									<div class="item-dtail-orderinvalid">ただいまご注文いただけません。</div>
+								{% endif %}
+							</div>
+							<input type="hidden" name="itemId" value="{{ itemData.itemId }}">
+							<input type="hidden" name="variationId" value="{{ variationList[0].variationId }}">
+							<input type="hidden" name="shpHash" value="{{ shpHash }}">
+						</form>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<!-- contents -->
+	</div>
+	<!-- wrapper -->
+	<div id="footer" class="clearfix">
+		<div class="btn-pagetop">
+			<a href="#wrapper"></a>
+		</div>
+		<div class="footer-top">
+			<div class="row clearfix">
+				<div class="footer-logo">
+					{% if ftrLogoDispFlag == 1 and ftrLogoImageUrl is not empty %}<a href="/"><img src="{{ ftrLogoImageUrl }}" alt="{{ shopName }}"></a>{% else %}<div class="logo-text logo-text-footer"><a href="/">{{ shopName }}</a></div>{% endif %}
+				</div>
+				<div class="footer-sns">
+					<ul class="clearfix">
+						<li>
+							<a href="http://twitter.com/share?url={{ shpUrl }}&text={{ shopName }}" target="_blank"><img src="{{shpImgUrl}}/cms/yt00005/img/icn-sns-tw.png" alt="twitter"></a>
+						</li>
+						<li>
+							<a href="http://www.facebook.com/share.php?u={{ shpUrl }}" onclick="window.open(this.href, 'FBwindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"><img src="{{shpImgUrl}}/cms/yt00005/img/icn-sns-fb.png" alt="facebook"></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<div class="row clearfix">
+				<p class="copyright">Copyright &copy; {{ shopName }} All Rights Reserved.</p>
+			</div>
+		</div>
+	</div>
+	<!-- footer -->
+	<div class="overlay"></div>
+	<script src="{{shpImgUrl}}/cms/yt00005/js/jquery-1.12.4.min.js" type="text/javascript"></script>
+	<script src="{{shpImgUrl}}/cms/yt00005/js/jquery-ui-1.11.4.min.js" type="text/javascript"></script>
+	<script src="{{shpImgUrl}}/cms/yt00005/js/jquery.flicksimple.js" type="text/javascript"></script>
+	<script src="{{shpImgUrl}}/cms/yt00005/js/shop-script.js" type="text/javascript"></script>
+	<[-- BODY_CUSTOM_CONTENTS --]>
+</body>
+</html>
